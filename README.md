@@ -4,7 +4,7 @@
 
 FundedFutures is an innovative job platform connecting ambitious tech professionals with well-funded startups, providing real-time access to ground-floor opportunities at the next wave of tech innovators.
 
-![FundedFutures Logo](path_to_logo_image.png)
+
 
 ## Table of Contents
 
