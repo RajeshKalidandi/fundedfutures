@@ -1,16 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect } from 'react'
+import { supabase } from '../../lib/database'
 import JobFilters from '../../components/JobFilters'
 import JobList from '../../components/JobList'
-import JobMap from '../../components/JobMap'
-import TrendingChart from '../../components/TrendingChart'
-import FundingNewsTicker from '../../components/FundingNewsTicker'
-import Image from 'next/image'
 
-export default function JobSearch() {
-  const [view, setView] = useState<'list' | 'map'>('list')
+const JOBS_PER_PAGE = 10
+
+const JobsPage: React.FC = () => {
+  const [jobs, setJobs] = useState([])
+  const [filteredJobs, setFilteredJobs] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalJobs, setTotalJobs] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
   const [filters, setFilters] = useState({
     keyword: '',
     location: '',
@@ -19,78 +21,83 @@ export default function JobSearch() {
     fundingStage: ''
   })
 
-  const handleFilterChange = (newFilters: Partial<typeof filters>) => {
-    setFilters({ ...filters, ...newFilters })
+  useEffect(() => {
+    fetchJobs()
+  }, [currentPage])
+
+  const fetchJobs = async () => {
+    setIsLoading(true)
+    const { data, error, count } = await supabase
+      .from('job_listings')
+      .select('*', { count: 'exact' })
+      .range((currentPage - 1) * JOBS_PER_PAGE, currentPage * JOBS_PER_PAGE - 1)
+
+    if (error) {
+      console.error('Error fetching jobs:', error)
+    } else {
+      setJobs(data)
+      setFilteredJobs(data)
+      setTotalJobs(count || 0)
+    }
+    setIsLoading(false)
   }
 
+  const handleFilterChange = async (newFilters: Partial<typeof filters>) => {
+    setIsLoading(true)
+    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }))
+    
+    let query = supabase.from('job_listings').select('*', { count: 'exact' })
+
+    if (newFilters.keyword) {
+      query = query.ilike('title', `%${newFilters.keyword}%`)
+    }
+    if (newFilters.location) {
+      query = query.ilike('location', `%${newFilters.location}%`)
+    }
+    if (newFilters.jobType) {
+      query = query.eq('job_type', newFilters.jobType)
+    }
+    if (newFilters.salary) {
+      query = query.gte('salary_min', newFilters.salary[0]).lte('salary_max', newFilters.salary[1])
+    }
+    if (newFilters.fundingStage) {
+      query = query.eq('funding_stage', newFilters.fundingStage)
+    }
+
+    const { data, error, count } = await query
+      .range((currentPage - 1) * JOBS_PER_PAGE, currentPage * JOBS_PER_PAGE - 1)
+
+    if (error) {
+      console.error('Error filtering jobs:', error)
+    } else {
+      setFilteredJobs(data)
+      setTotalJobs(count || 0)
+    }
+    setIsLoading(false)
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  const totalPages = Math.ceil(totalJobs / JOBS_PER_PAGE)
+
   return (
-    <main className="bg-[#FFFFFF] min-h-screen relative overflow-hidden">
-      {/* Abstract geometric background */}
-      <div className="absolute inset-0 z-0 opacity-5">
-        <Image src="/geometric-bg.svg" layout="fill" objectFit="cover" alt="Geometric background" />
-      </div>
-      
-      <FundingNewsTicker />
-
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <motion.h1 
-          className="text-4xl font-montserrat font-bold mb-4 text-[#172B4D]"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Your Gateway to Tomorrow's Tech Giants
-        </motion.h1>
-        <motion.p 
-          className="text-xl font-opensans mb-8 text-[#6B778C]"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          Discover ground-floor opportunities at freshly funded startups
-        </motion.p>
-        
-        <JobFilters filters={filters} onFilterChange={handleFilterChange} />
-        
-        <div className="mb-6 flex space-x-4">
-          <button 
-            onClick={() => setView('list')} 
-            className={`font-montserrat font-bold px-4 py-2 rounded-full transition-colors ${view === 'list' ? 'bg-[#0052CC] text-white' : 'bg-[#FFFFFF] text-[#6B778C] border border-[#6B778C]'}`}
-          >
-            List View
-          </button>
-          <button 
-            onClick={() => setView('map')} 
-            className={`font-montserrat font-bold px-4 py-2 rounded-full transition-colors ${view === 'map' ? 'bg-[#0052CC] text-white' : 'bg-[#FFFFFF] text-[#6B778C] border border-[#6B778C]'}`}
-          >
-            Map View
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              {view === 'list' ? <JobList filters={filters} /> : <JobMap filters={filters} />}
-            </motion.div>
-          </div>
-          <div className="space-y-8">
-            <TrendingChart />
-            <div className="bg-[#FFFFFF] p-6 rounded-lg shadow-lg border border-[#6B778C]/20">
-              <h3 className="text-xl font-montserrat font-bold mb-4 text-[#172B4D]">Why FundedFutures?</h3>
-              <ul className="space-y-2 font-opensans text-[#6B778C]">
-                <li>✅ Real-time access to jobs at freshly funded startups</li>
-                <li>✅ Comprehensive company profiles with funding history</li>
-                <li>✅ Tailored job matches based on your skills and career goals</li>
-                <li>✅ Insider access to the next wave of tech innovators</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-montserrat font-bold text-text mb-8">Find Your Next Opportunity</h1>
+      <JobFilters filters={filters} onFilterChange={handleFilterChange} />
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <JobList
+          jobs={filteredJobs}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
+    </div>
   )
 }
+
+export default JobsPage

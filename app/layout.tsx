@@ -1,10 +1,9 @@
+import React from 'react'
 import './globals.css'
-import { Montserrat, Open_Sans, Roboto_Mono } from 'next/font/google'
-import Link from 'next/link'
+import { Inter } from 'next/font/google'
+import { Providers } from '../components/Providers'
 
-const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
-const openSans = Open_Sans({ subsets: ['latin'], variable: '--font-opensans' })
-const robotoMono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto' })
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'FundedFutures',
@@ -17,19 +16,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${montserrat.variable} ${openSans.variable} ${robotoMono.variable}`}>
-      <body className="font-opensans">
-        <nav className="bg-primary text-white p-4">
-          <div className="container mx-auto flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold font-montserrat">FundedFutures</Link>
-            <ul className="flex space-x-4">
-              <li><Link href="/" className="font-montserrat">Home</Link></li>
-              <li><Link href="/jobs" className="font-montserrat">Jobs</Link></li>
-              {/* Add more navigation items as needed */}
-            </ul>
-          </div>
-        </nav>
-        {children}
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
