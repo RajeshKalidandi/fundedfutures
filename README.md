@@ -1,5 +1,8 @@
 # FundedFutures
 
+**Notice: Product development has been temporarily suspended due to unforeseen circumstances. We appreciate your interest and support.**
+
+
 ## Your Gateway to Tomorrow's Tech Giants
 
 FundedFutures is an innovative job platform connecting ambitious tech professionals with well-funded startups, providing real-time access to ground-floor opportunities at the next wave of tech innovators.
