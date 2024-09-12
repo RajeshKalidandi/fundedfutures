@@ -52,3 +52,63 @@ To foster innovation and growth in the tech ecosystem by providing unparalleled 
 ## Getting Started
 
 1. Clone the repository:
+git clone https://github.com/your-username/fundedfutures.git cd fundedfutures
+
+2. Install dependencies:
+npm install
+
+3. Set up environment variables ( [Environment Variables](#environment-variables) section)
+
+4. Run the development server:
+npm run dev
+
+Open http://localhost:3000 in your browser to see the application.
+
+## Project Structure
+
+
+fundedfu── app├── jobs/
+│      └── page.tsx
+│   ├── login/
+│   │   └── page.tsx
+│   ├── register/
+│   │   └── page.tsx
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── JobCard.tsx
+│   ├── JobFilters.tsx
+│   ├── JobList.tsx
+│   └── Layout.tsx
+├── lib/
+│   ├── auth.ts
+│   └── database.ts
+├── pages/
+│   └── api/
+│       ├── auth/
+│       │   └── [...nextauth].ts
+│       └── register.ts
+├── public/
+├── styles/
+├── .env.local
+├── next.config.js
+├── package.json
+├── README.md
+└── tsconfig.json
+
+## Environment Variables
+Create a .env.local file in the root directory with the following variables:
+
+MONGODB_URI=your_mongodb_connection_string
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_api_key
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
+
+## Contributing
+We welcome contributions to FundedFutures! Please read our Contributing Guidelines for details on our code of conduct and the process for submitting pull requests.
+
+## License
+This project is licensed underMIT License](LICENSE).
+
+## FundedFutures is currently in development. We're excited about its potential to transform the tech job market and welcome feedback and contributions from the community!
