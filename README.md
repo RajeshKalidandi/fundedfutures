@@ -24,6 +24,8 @@ FundedFutures is an innovative job platform connecting ambitious tech profession
 
 FundedFutures aims to revolutionize tech recruitment by bridging the gap between emerging startups and top-tier talent. Our platform leverages real-time data on startup funding to provide users with unique insights and opportunities in the tech job market.
 
+While development is currently on hold, we remain committed to our vision of transforming the tech job market and hope to resume work on this project in the future.
+
 ### Vision
 
 Connecting ambitious talent with the next wave of tech innovators.
@@ -113,5 +115,3 @@ We welcome contributions to FundedFutures! Please read our Contributing Guidelin
 
 ## License
 This project is licensed underMIT License](LICENSE).
-
-## FundedFutures is currently in development. We're excited about its potential to transform the tech job market and welcome feedback and contributions from the community!
